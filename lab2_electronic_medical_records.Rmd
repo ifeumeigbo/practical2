@@ -290,6 +290,10 @@ analysis.data %>% dplyr::select(medical_specialty, transcription) %>% dplyr::fil
 
 **9** Extract an example of one of the other "top lemmas" by modifying the above code
 
+```{r}
+analysis.data %>% dplyr::select(medical_specialty, transcription) %>% dplyr::filter(stringr::str_detect(transcription, 'carotid artery')) %>% dplyr::slice(1)
+```
+
 ## Topic Modelling
 
 In NLP, we often have collections of documents (in our case EMR transcriptions) that we’d like to divide into groups so that we can understand them separately. Topic modeling is a method for unsupervised classification of such documents, similar to clustering on numeric data.
