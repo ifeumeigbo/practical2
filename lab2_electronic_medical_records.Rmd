@@ -222,10 +222,11 @@ ggplot2::ggplot(lemma.freq, ggplot2::aes(x=proportion,
   ggplot2:: labs(y="Orthopedic", x = NULL)
 ```
 
-**6** What does this plot tell you about the relative similarity of lemma frequencies between Surgery and Orthopedic and between radiology and Surgery? Based on what these specialties involve, is this what you would expect?  
+**6** What does this plot tell you about the relative similarity of lemma frequencies between Surgery and Orthopedic and between radiology and Surgery? Based on what these specialties involve, is this what you would expect?\
 The plot demonstrates that Surgery and Orthopedic have more similar lemma frequencies, i.e. points closer to the diagonal line, compared to Radiology and Orthopedic. This makes sense because both Surgery and Orthopedic involve surgical procedures, sharing terminology related to operations, anatomy, and surgical techniques. In contrast, Radiology focuses on imaging and diagnosis, using a different vocabulary.
 
-**7** Modify the above plotting code to do a direct comparison of Surgery and Radiology (i.e., have Surgery or Radiology on the Y-axis and the other 2 specialties as the X facets)  
+**7** Modify the above plotting code to do a direct comparison of Surgery and Radiology (i.e., have Surgery or Radiology on the Y-axis and the other 2 specialties as the X facets)
+
 ```{r}
 lemma.freq.surgery <- lemmatized.data %>%
   count(medical_specialty, lemma) %>%
@@ -248,7 +249,6 @@ ggplot(lemma.freq.surgery, aes(x=proportion, y=`Surgery`,
        title="Lemma Frequency Comparison: Surgery vs Other Specialties")
 
 ```
-
 
 ### TF-IDF Normalisation
 
@@ -275,7 +275,12 @@ We can then look at the top 10 lemma by tf-idf within each specialty:
 all.counts.tfidf %>% dplyr::group_by(medical_specialty) %>% dplyr::slice_max(order_by=tf_idf, n=10)
 ```
 
-**8** Are there any lemmas that stand out in these lists? Why or why not?
+**8** Are there any lemmas that stand out in these lists? Why or why not?\
+A few lemmas stand out as specialty-specific:\
+Orthopedic: 'range motion', 'carpal ligament', 'steri strips' - these are surgical/anatomical terms.\
+Surgery: 'prepped draped', 'preoperative diagnosis' - these surgical procedure terminology.\
+Radiology: 'carotid artery', 'heart rate' - these are imaging and cardiovascular terms.\
+These reflect the specialized vocabulary of each medical field represented.
 
 We can look at transcriptions in full using these lemmas to check how they are used with `stringr::str_detect`
 
