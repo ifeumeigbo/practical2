@@ -225,7 +225,30 @@ ggplot2::ggplot(lemma.freq, ggplot2::aes(x=proportion,
 **6** What does this plot tell you about the relative similarity of lemma frequencies between Surgery and Orthopedic and between radiology and Surgery? Based on what these specialties involve, is this what you would expect?  
 The plot demonstrates that Surgery and Orthopedic have more similar lemma frequencies, i.e. points closer to the diagonal line, compared to Radiology and Orthopedic. This makes sense because both Surgery and Orthopedic involve surgical procedures, sharing terminology related to operations, anatomy, and surgical techniques. In contrast, Radiology focuses on imaging and diagnosis, using a different vocabulary.
 
-**7** Modify the above plotting code to do a direct comparison of Surgery and Radiology (i.e., have Surgery or Radiology on the Y-axis and the other 2 specialties as the X facets)
+**7** Modify the above plotting code to do a direct comparison of Surgery and Radiology (i.e., have Surgery or Radiology on the Y-axis and the other 2 specialties as the X facets)  
+```{r}
+lemma.freq.surgery <- lemmatized.data %>%
+  count(medical_specialty, lemma) %>%
+  group_by(medical_specialty) %>%
+  mutate(proportion = n / sum(n)) %>%
+  pivot_wider(names_from = medical_specialty, values_from = proportion) %>%
+  pivot_longer(`Orthopedic`:`Radiology`, names_to = "medical_specialty", values_to = "proportion")
+
+ggplot(lemma.freq.surgery, aes(x=proportion, y=`Surgery`, 
+                               color=abs(`Surgery` - proportion))) +
+  geom_abline(color="gray40", lty=2) +
+  geom_jitter(alpha=0.1, size=2.5, width=0.3, height=0.3) +
+  geom_text(aes(label=lemma), check_overlap=TRUE, vjust=1.5) +
+  scale_x_log10(labels=percent_format()) +
+  scale_y_log10(labels=percent_format()) +
+  scale_color_gradient(limits=c(0, 0.001), low="darkslategray4", high="gray75") +
+  facet_wrap(~medical_specialty, ncol = 2) +
+  theme(legend.position="none") +
+  labs(y="Surgery", x = NULL,
+       title="Lemma Frequency Comparison: Surgery vs Other Specialties")
+
+```
+
 
 ### TF-IDF Normalisation
 
