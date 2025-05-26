@@ -158,7 +158,18 @@ print(bigram_counts)
 
 
 Sometimes we are interested in tokenising/segmenting things other than words like whole sentences or paragraphs.\
-**4** How many unique sentences are there in each category? Hint: use `?tidytext::unnest_tokens` to see the documentation for this function.
+**4** How many unique sentences are there in each category? Hint: use `?tidytext::unnest_tokens` to see the documentation for this function.  
+```{r}
+sentence_data <- analysis.data %>% 
+  unnest_tokens(sentence, transcription, token = "sentences", to_lower=TRUE)
+
+sentence_counts <- sentence_data %>%
+  group_by(medical_specialty) %>%
+  summarise(unique_sentences = n_distinct(sentence)) %>%
+  arrange(desc(unique_sentences))
+print(sentence_counts)
+```
+
 
 Now that we've tokenized to words and removed stop words, we can find the most commonly word used within each category:
 
