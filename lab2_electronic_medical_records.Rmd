@@ -147,7 +147,15 @@ count_distribution <- word_counts %>%
        y = "Number of Words")
 ```
 
-**3** How many unique bi-grams are there in each category without stop words and numbers?
+**3** How many unique bi-grams are there in each category without stop words and numbers?  
+```{r}
+bigram_counts <- tokenized.data %>%
+  group_by(medical_specialty) %>%
+  summarise(unique_bigrams = n_distinct(ngram)) %>%
+  arrange(desc(unique_bigrams))
+print(bigram_counts)
+```
+
 
 Sometimes we are interested in tokenising/segmenting things other than words like whole sentences or paragraphs.\
 **4** How many unique sentences are there in each category? Hint: use `?tidytext::unnest_tokens` to see the documentation for this function.
