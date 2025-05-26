@@ -98,7 +98,11 @@ tidytext::stop_words %>% dplyr::group_by(lexicon) %>% dplyr::distinct(word) %>% 
 
 ```{r}
 #Insert code here. 
-
+unigram_counts <- tokenized.data.unigram %>%
+  group_by(medical_specialty) %>%
+  summarise(unique_unigrams = n_distinct(word)) %>%
+  arrange(desc(unique_unigrams))
+print(unigram_counts)
 ```
 
 Let's plot some distribution of unigram tokens (words)
