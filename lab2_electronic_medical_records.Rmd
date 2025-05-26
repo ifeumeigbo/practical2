@@ -374,6 +374,46 @@ Interestingly, Surgery, Orthopedic, and Radiology assign mostly to a single topi
 
 **10** Repeat this with a 6 topic LDA, do the top terms from the 3 topic LDA still turn up? How do the specialties get split into sub-topics?
 
+```{r}
+# Fitting the 6-topic LDA model
+emr.lda.6 <- LDA(emr.dcm, k=6, control=list(seed=42))
+emr.topics.6 <- tidy(emr.lda.6, matrix='beta')
+
+# Extracting top terms for 6-topic model
+top.terms.6 <- emr.topics.6 %>% 
+  group_by(topic) %>%
+  slice_max(beta, n=10) %>%
+  ungroup() %>%
+  arrange(topic, -beta)
+```
+
+```{r}
+top.terms.6 %>%
+  mutate(term=reorder_within(term, beta, topic)) %>%
+  ggplot(aes(beta, term, fill=factor(topic))) +
+  geom_col(show.legend=FALSE) +
+  facet_wrap(~ topic, scales='free') +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
+  scale_y_reordered() +
+  labs(title="Top Terms by Topic (6-Topic LDA)")
+```
+
+```{r}
+# Analyzing the 6-topic assignments by specialty
+specialty_gamma.6 <- tidy(emr.lda.6, matrix='gamma')
+specialty_gamma.6 <- left_join(specialty_gamma.6, note_id_specialty_mapping)
+
+specialty_gamma.6 %>%
+  mutate(medical_specialty = reorder(medical_specialty, gamma * topic)) %>%
+  ggplot(aes(factor(topic), gamma)) +
+  geom_boxplot() +
+  facet_wrap(~ medical_specialty) +
+  labs(x = "topic", y = expression(gamma),
+       title="Topic Assignments by Medical Specialty (6-Topic LDA)")
+```
+
+While many terms from the five-topic model are present in the six-topic model, the additional topic enables more nuanced separation. This allows for the specialization of specialties into more specific sub-topics, such as different types of surgical procedures or imaging studies.
+
 ## Credits
 
 Examples draw heavily on material (and directly quotes/copies text) from Julia Slige's `tidytext` textbook.
